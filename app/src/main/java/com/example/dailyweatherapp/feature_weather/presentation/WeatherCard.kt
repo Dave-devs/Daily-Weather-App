@@ -3,8 +3,8 @@ package com.example.dailyweatherapp.feature_weather.presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
-import androidx.compose.material3.*
+import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,13 +22,12 @@ import kotlin.math.roundToInt
 @Composable
 fun WeatherCard(
     state: WeatherState,
+    backgroundColor: Color,
     modifier: Modifier = Modifier
 ) {
-    state.weatherInfo?.currentWeatherData?.let { data ->
+    state.weatherInfo?.currentWeatherData?.let{ data ->
         Card(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            ),
+            backgroundColor = backgroundColor,
             shape = RoundedCornerShape(10.dp),
             modifier = modifier.padding(16.dp)
         ) {
@@ -36,21 +35,19 @@ fun WeatherCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "Today ${
-                        data.time.format(
-                            DateTimeFormatter.ofPattern("HH:mm")
-                        )
-                    }",
+                    text = "Today ${data.time.format(
+                    DateTimeFormatter.ofPattern("HH:mm")
+                )}",
                     modifier = Modifier.align(Alignment.End),
                     color = Color.White
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Image(
                     painter = painterResource(id = data.weatherType.iconRes),
-                    contentDescription = null,
+                    contentDescription = "weather icon",
                     modifier = Modifier.width(200.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -92,6 +89,7 @@ fun WeatherCard(
                         textStyle = TextStyle(color = Color.White)
                     )
                 }
+
             }
         }
     }

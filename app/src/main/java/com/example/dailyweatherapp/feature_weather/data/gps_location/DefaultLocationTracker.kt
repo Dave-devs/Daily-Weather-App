@@ -9,6 +9,7 @@ import android.location.LocationManager
 import androidx.core.content.ContextCompat
 import com.example.dailyweatherapp.feature_weather.domain.gps.LocationTracker
 import com.google.android.gms.location.FusedLocationProviderClient
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
@@ -20,37 +21,42 @@ class DefaultLocationTracker @Inject constructor(
 ): LocationTracker {
 
     override suspend fun getCurrentLocation(): Location? {
+        //Check for the android.permission.ACCESS_FINE_LOCATION in the manifest file.
         val hasAccessFineLocationPermission = ContextCompat.checkSelfPermission(
             application,
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
+        //Check for the android.permission.ACCESS_COARSE_LOCATION in the manifest file.
         val hasAccessCoarseLocationPermission = ContextCompat.checkSelfPermission(
             application,
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
+        //Get reference to location manager.
         val locationManager = application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        //Check permissions for gps location is enabled to retrieve location or return empty.
         val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         if(!hasAccessCoarseLocationPermission || !hasAccessFineLocationPermission || !isGpsEnabled) {
             return null
         }
 
+        //If check permissions for gps is enabled, then we do this in coroutine.
         return suspendCancellableCoroutine { continuation ->
             locationClient.lastLocation.apply {
-                if(isComplete) {
+                if (isComplete) {
                     if(isSuccessful) {
-                        resume(result)
+                        continuation.resume(result)
                     } else {
-                        resume(null)
+                        continuation.resume(null)
                     }
                     return@suspendCancellableCoroutine
                 }
                 addOnSuccessListener {
-                    resume(it)
+                    continuation.resume(it)
                 }
                 addOnFailureListener {
-                    resume(null)
+                    continuation.resume(null)
                 }
                 addOnCanceledListener {
                     continuation.cancel()
@@ -60,5 +66,6 @@ class DefaultLocationTracker @Inject constructor(
     }
 }
 
-private fun <T> resume(value: T) {
+private fun <T> CancellableContinuation<T>.resume(value: T?) {
+    resume(value)
 }
