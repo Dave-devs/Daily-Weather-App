@@ -9,11 +9,14 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 private data class IndexedWeatherData(
+    //Index for day of week.
     val index: Int,
     val data: WeatherData
 )
 
+//Mapper function for days of the week to the values in the WeatherData.
 fun WeatherHoulyData.toWeatherDataMap(): Map<Int, List<WeatherData>> {
+    //Return map time to each weather info with local day timestamp.
     return time.mapIndexed { index, time ->
         val temperature = temperatures[index]
         val weatherCode = weatherCodes[index]
@@ -38,6 +41,7 @@ fun WeatherHoulyData.toWeatherDataMap(): Map<Int, List<WeatherData>> {
     }
 }
 
+//Mapper function for hour of the day(get the weather for the hour in the day).
 fun WeatherHourly.toWeatherInfo(): WeatherInfo {
     val weatherDataMap = weatherData.toWeatherDataMap()
     val now = LocalDateTime.now()
