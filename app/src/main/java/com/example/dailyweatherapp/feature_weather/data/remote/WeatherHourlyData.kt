@@ -2,7 +2,7 @@ package com.example.dailyweatherapp.feature_weather.data.remote
 
 import com.squareup.moshi.Json
 
-data class WeatherHoulyData(
+data class WeatherHourlyData(
     val time: List<String>,
     @field:Json(name = "temperature_2m")
     val temperatures: List<Double>,
@@ -13,5 +13,5 @@ data class WeatherHoulyData(
     @field:Json(name = "windspeed_10m")
     val windSpeeds: List<Double>,
     @field:Json(name = "relativehumidity_2m")
-    val humidities: List<Double>
+    val humidity: List<Double>
 )

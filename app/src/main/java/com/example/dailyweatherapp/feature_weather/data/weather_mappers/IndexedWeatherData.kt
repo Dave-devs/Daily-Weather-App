@@ -1,6 +1,6 @@
 package com.example.dailyweatherapp.feature_weather.data.weather_mappers
 
-import com.example.dailyweatherapp.feature_weather.data.remote.WeatherHoulyData
+import com.example.dailyweatherapp.feature_weather.data.remote.WeatherHourlyData
 import com.example.dailyweatherapp.feature_weather.data.remote.WeatherHourly
 import com.example.dailyweatherapp.feature_weather.domain.weather.WeatherData
 import com.example.dailyweatherapp.feature_weather.domain.weather.WeatherInfo
@@ -15,14 +15,14 @@ private data class IndexedWeatherData(
 )
 
 //Mapper function for days of the week to the values in the WeatherData.
-fun WeatherHoulyData.toWeatherDataMap(): Map<Int, List<WeatherData>> {
+fun WeatherHourlyData.toWeatherDataMap(): Map<Int, List<WeatherData>> {
     //Return map time to each weather info with local day timestamp.
     return time.mapIndexed { index, time ->
         val temperature = temperatures[index]
         val weatherCode = weatherCodes[index]
         val windSpeed = windSpeeds[index]
         val pressure = pressures[index]
-        val humidity = humidities[index]
+        val humidity = humidity[index]
         IndexedWeatherData(
             index = index,
             data = WeatherData(
